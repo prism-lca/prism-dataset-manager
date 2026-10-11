@@ -10,7 +10,9 @@
   original objects and test accounts; original 85 datasets still match backup.
 - Repository main advanced to `fe974c0` with a maintainer-only main workflow.
   Incorporated that documentation without changing it; prepare this release
-  on a feature branch/PR rather than bypassing the new main rule. Hosted DB
+  on branch `codex/preserve-import-originals`, with review-ready PR #1:
+  https://github.com/prism-lca/prism-dataset-manager/pull/1. No merge conflicts.
+  Hosted DB
   migrations are live; Pages release awaits a maintainer merge.
 - Validation: 36 frontend tests, lint and production build passed. Disposable
   PostgreSQL acceptance passed atomic archive/reference rollback, retries, RLS
