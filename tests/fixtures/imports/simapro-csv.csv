@@ -1,0 +1,203 @@
+﻿{SimaPro 9.6.0.0}
+{processes}
+{Date: 01/01/1970}
+{Time: 00:00:00}
+{Project: PRISM export}
+{CSV Format version: 9.0.0}
+{CSV separator: Semicolon}
+{Decimal separator: .}
+{Date separator: /}
+{Short date format: M/d/yyyy}
+{Export platform IDs: Yes}
+
+Process
+
+PlatformId
+064e51a4-c019-4169-a311-8c435c6f7b85
+
+Category type
+material
+
+Process identifier
+064e51a4-c019-4169-a311-8c435c6f7b85
+
+Type
+Unit process
+
+Process name
+Steel production
+
+Status
+Draft
+
+Time period
+Unspecified
+
+Geography
+GLO
+
+Technology
+Unspecified
+
+Representativeness
+Unspecified
+
+Multiple output allocation
+Unspecified
+
+Substitution allocation
+Unspecified
+
+Cut off rules
+Unspecified
+
+Capital goods
+Unspecified
+
+Boundary with nature
+Unspecified
+
+Infrastructure
+No
+
+Date
+1/1/1970
+
+Record
+PRISM
+
+Generator
+PRISM
+
+Comment
+Upstream: produces the intermediate steel sheet
+
+System description
+PRISM export
+
+Products
+Intermediate steel sheet;kg;1;100;not defined;PRISM;PRISM-FLOW-ID: 1f30cb32-f186-43ad-b8df-5ecd37036192
+
+Avoided products
+
+Resources
+
+Materials/fuels
+
+Electricity/heat
+
+Emissions to air
+
+Emissions to water
+
+Emissions to soil
+
+Final waste flows
+
+Non material emissions
+
+Social issues
+
+Economic issues
+
+Waste to treatment
+
+End
+
+
+Process
+
+PlatformId
+7ad3c1ff-a419-42a4-aa65-cbdb61afa057
+
+Category type
+material
+
+Process identifier
+7ad3c1ff-a419-42a4-aa65-cbdb61afa057
+
+Type
+Unit process
+
+Process name
+Steel finishing
+
+Status
+Draft
+
+Time period
+Unspecified
+
+Geography
+GLO
+
+Technology
+Unspecified
+
+Representativeness
+Unspecified
+
+Multiple output allocation
+Unspecified
+
+Substitution allocation
+Unspecified
+
+Cut off rules
+Unspecified
+
+Capital goods
+Unspecified
+
+Boundary with nature
+Unspecified
+
+Infrastructure
+No
+
+Date
+1/1/1970
+
+Record
+PRISM
+
+Generator
+PRISM
+
+Comment
+Downstream: consumes the intermediate steel sheet
+
+System description
+PRISM export
+
+Products
+Finished steel product;kg;1;100;not defined;PRISM;PRISM-FLOW-ID: 1f30cb32-f186-43ad-b8df-5ecd37036192
+
+Avoided products
+
+Resources
+
+Materials/fuels
+Intermediate steel sheet;kg;1;Undefined;0;0;0;PRISM-FLOW-ID: 1f30cb32-f186-43ad-b8df-5ecd37036192
+
+Electricity/heat
+
+Emissions to air
+
+Emissions to water
+
+Emissions to soil
+
+Final waste flows
+
+Non material emissions
+
+Social issues
+
+Economic issues
+
+Waste to treatment
+
+End
+
+

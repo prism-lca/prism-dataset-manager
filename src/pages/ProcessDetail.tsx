@@ -1,3 +1,4 @@
+import { StoredAdminFields } from '@/components/ilcd/stored-admin-fields'
 import { Link, useParams } from "react-router-dom"
 import { CircleCheck, CircleX } from "lucide-react"
 import {
@@ -93,6 +94,7 @@ function ExchangeTable({
             <TableHead>Data derivation type / status</TableHead>
             <TableHead>Quantitative reference</TableHead>
             <TableHead>Review type</TableHead>
+            <TableHead>Comment</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -123,7 +125,7 @@ function ExchangeTable({
                 <TableCell>{ex.meanAmount ?? ""}</TableCell>
                 <TableCell>{ex.resultingAmount ?? ""}</TableCell>
                 <TableCell>{resolved?.referenceUnit ?? "-"}</TableCell>
-                <TableCell>Unknown derivation</TableCell>
+                <TableCell>Not interpreted</TableCell>
                 <TableCell>
                   {isReference ? (
                     <CircleCheck className="size-4 text-primary" />
@@ -131,13 +133,14 @@ function ExchangeTable({
                     <CircleX className="text-muted-foreground size-4" />
                   )}
                 </TableCell>
-                <TableCell>Unreviewed</TableCell>
+                <TableCell>Not interpreted</TableCell>
+                <TableCell className="min-w-64 whitespace-normal"><LangRow label="Exchange comment" value={ex.generalComment} /></TableCell>
               </TableRow>
             )
           })}
           {exchanges.length === 0 && (
             <TableRow>
-              <TableCell colSpan={11} className="text-muted-foreground">
+              <TableCell colSpan={12} className="text-muted-foreground">
                 No {title.toLowerCase()} exchanges.
               </TableCell>
             </TableRow>
@@ -252,6 +255,7 @@ export function ProcessDetail() {
             </TabsContent>
 
             <TabsContent value="admin" className="flex flex-col gap-6 pt-6">
+              <StoredAdminFields value={dataset.payload.administrativeInformation} />
               <div>
                 <p className="text-sm font-medium">Reference to commissioner</p>
                 <p className="text-muted-foreground text-sm">
@@ -339,7 +343,7 @@ export function ProcessDetail() {
                 </TableBody>
               </Table>
               <p className="text-muted-foreground text-sm">
-                No LCIA results available for profile analysis.
+                This view does not interpret imported LCIA results. Inspect Source data and additional fields for the complete stored content.
               </p>
               <Table>
                 <TableHeader>
@@ -363,13 +367,13 @@ export function ProcessDetail() {
 
             <TabsContent value="validation" className="pt-6">
               <p className="text-muted-foreground text-sm">
-                No validation records available. This process has not been reviewed.
+                This view does not interpret imported review records. Inspect Source data and additional fields before concluding that no review exists.
               </p>
             </TabsContent>
 
             <TabsContent value="compliance" className="pt-6">
               {model.complianceDeclarations.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No compliance declarations.</p>
+                <p className="text-muted-foreground text-sm">No mapped compliance declarations. Inspect Source data for original compliance content.</p>
               ) : (
                 <Table>
                   <TableHeader>

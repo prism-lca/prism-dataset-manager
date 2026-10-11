@@ -47,6 +47,71 @@ python3 scripts/export_seed.py
 
 The exporter reads the public dataset fields using the Supabase URL and anon key from `.env`. Review and commit the resulting `supabase/seed.sql`.
 
+### Original file preservation
+
+Apply migrations in filename order. Existing deployed projects additionally need
+`202610110001_lossless_import.sql` and, on hosted Supabase,
+`202610110002_import_original_cleanup.sql`. The latter enables `http` and
+`pg_cron`; configure these two private Vault secrets before its daily 03:23 UTC
+job runs:
+
+- `prism_import_cleanup_url`: project Supabase URL.
+- `prism_import_cleanup_key`: backend service-role key. Keep it out of browser
+  environment variables, repository files and logs.
+
+Create/update them through Supabase Vault with administrator access. The live
+project's secrets and daily job were configured during this rollout. Cleanup
+uses the Storage API rather than deleting `storage.objects` rows; confirmed
+artifacts are excluded. An optional server-only manual cleanup is available:
+
+```
+SUPABASE_URL=<project-url> node scripts/cleanup_import_originals.mjs
+```
+
+Supply `SUPABASE_SERVICE_ROLE_KEY` through your backend environment. The manual
+script claims expired uploads before removal, serializing against confirmation.
+
+New imports archive the exact uploaded bytes in a private bucket. Browser upload
+and retrieval verify SHA-256; confirmation saves the artifact, normalized rows
+and source records atomically. Original download is separate from converted
+export/current dataset JSON. Historical originals cannot be reconstructed from
+old normalized rows. Five formats have reproducible integration samples; this
+is not exhaustive compatibility with every vendor variation.
+
+Every detail page has **Source data and additional fields** below the domain
+views. Preview and saved sources provide the full package inventory,
+JSON/XML/text search, paged long text, binary entry download, selectable text
+encoding, and exact original download. Mapping is explicitly **unassessed**
+until the engine supplies field-level coverage. Editing preserves unknown fields
+and rejects stale writes. Existing imports may omit fields required for new
+manual records; editing does not force these missing fields to be invented. See [the staged roadmap](PLAN_LOSSLESS_IMPORT_UI.md).
+
+Verification:
+
+```
+npm run lint
+npm test
+npm run build
+# After building, start a preview on the engine's allowed local origin:
+npm run preview -- --host 127.0.0.1 --port 5173
+# Separate terminal, with Supabase URL/anon/backend key supplied as environment:
+npx playwright install chromium
+node tests/lossless-import.browser.mjs
+```
+
+The opt-in browser acceptance uses the real conversion engine and Supabase,
+creates two temporary accounts, exercises five formats and seven edit forms,
+and removes test accounts/data/originals afterward. `SMOKE_BASE_URL` overrides
+the origin; `CHROMIUM_EXECUTABLE` can select an existing browser. Do not run it
+without the intended database's administrator authorization.
+
+For disposable local PostgreSQL, apply the existing bootstrap, seed and earlier
+migrations, then `supabase/tests/storage_bootstrap.sql` and
+`202610110001_lossless_import.sql`. Run
+`python3 supabase/tests/lossless_import.py YOUR_DISPOSABLE_DATABASE` as local
+postgres. Hosted scheduled cleanup is tested separately through its actual
+Storage API.
+
 ### Dataset relationships
 
 All seven categories remain rows in `datasets`. `import_batches` tracks imports,

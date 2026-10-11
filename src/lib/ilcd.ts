@@ -8,7 +8,7 @@ import type { DatasetType } from "@/lib/datasets"
  */
 
 export const LANGS = ["en", "zh"] as const
-export type Lang = (typeof LANGS)[number]
+export type Lang = string
 export const LANG_LABELS: Record<Lang, string> = { en: "English", zh: "简体中文" }
 
 export interface LangText {
@@ -32,8 +32,12 @@ export function setLangText(
   lang: Lang,
   text: string,
 ): LangText[] {
-  const rest = (value ?? []).filter((v) => v.lang !== lang)
-  return text ? [...rest, { lang, text }] : rest
+  const entries = value ?? []
+  const index = entries.findIndex(v => v.lang === lang)
+  if (index < 0) return text ? [...entries, { lang, text }] : entries
+  return text
+    ? entries.map((entry, i) => i === index ? { ...entry, text } : entry)
+    : entries.filter((_, i) => i !== index)
 }
 
 /** ILCD's "GlobalReference": a pointer at another dataset, with a cached label. */

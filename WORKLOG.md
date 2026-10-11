@@ -2,6 +2,44 @@
 
 ## 2026-10-11
 
+- Live built-frontend acceptance passed the actual conversion engine and
+  Supabase for five formats, exact download hashes, refresh, ownership/immutability,
+  all seven no-op/one-field saves, hidden-field deletion cancellation, stale-save
+  rejection, missing-reference rejection, and interrupted-success response
+  recovery without duplicate rows. Removed all temporary datasets, batches,
+  original objects and test accounts; original 85 datasets still match backup.
+- Repository main advanced to `fe974c0` with a maintainer-only main workflow.
+  Incorporated that documentation without changing it; prepare this release
+  on a feature branch/PR rather than bypassing the new main rule. Hosted DB
+  migrations are live; Pages release awaits a maintainer merge.
+- Validation: 36 frontend tests, lint and production build passed. Disposable
+  PostgreSQL acceptance passed atomic archive/reference rollback, retries, RLS
+  isolation and confirmed-source immutability; older import concurrency tests
+  still pass. Anonymous frontend regression passed dependency-only reads.
+- Implemented the first release of `PLAN_LOSSLESS_IMPORT_UI.md`: seven retained
+  payload edit forms, optimistic concurrency, dynamic languages, full source
+  file inventory/view/download, all-type preview and complete warning details.
+  Added stored URI/timestamp and exchange/flow-property/unit comment display.
+  Original files are distinct from converted exports/current JSON. Field-level
+  engine mapping remains explicitly `unassessed`; the engine contract document
+  is absent from main and the broader roadmap remains partially pending.
+- Added private artifact/source tables, immutable owner-scoped Storage, and a
+  six-argument atomic import RPC. Applied both new migrations after a full
+  PostgreSQL 17 archive/roles backup at
+  `/workspaces/tiangong-simple-backups/20261011-pre-lossless-import/`. Every
+  pre-existing dataset field remained identical (85 records). A hosted cron job
+  at 03:23 UTC removes only unconfirmed uploads older than 24 hours through the
+  Storage API. Its server credentials are configured in private Vault; the
+  genuine HTTP cleanup removed an expired fixture successfully.
+- Added synthetic five-format fixtures via the real engine exporters, with
+  unsupported entries, binary bytes, and long French source content. A TIDAS
+  fixture exposed converter-valid missing owner references; confirmation now
+  identifies unresolved references before uploading. No references are silently
+  dropped. Fixed a jsonb key-order comparison that incorrectly rejected valid
+  saved inventories. Existing import edits tolerate absent creation-only fields
+  rather than requiring invented values.
+
+
 - Released `728385b` to main; GitHub Pages run `38099896624` succeeded. Verified
   the deployed app at `https://prism-lca.github.io/prism-dataset-manager/` with
   anonymous lightweight-list/dependency-only-detail checks and the signed-in

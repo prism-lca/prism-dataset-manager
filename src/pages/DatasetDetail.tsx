@@ -1,3 +1,4 @@
+import { DatasetSourceData } from '@/components/ilcd/dataset-source-data'
 import { useParams } from "react-router-dom"
 import { getDatasetTypeInfo } from "@/lib/datasets"
 import { ModelDetail } from "@/pages/ModelDetail"
@@ -15,18 +16,18 @@ export function DatasetDetail() {
   if (!typeInfo) return null
   switch (typeInfo.type) {
     case "model":
-      return <ModelDetail />
+      return <><ModelDetail /><DatasetSourceData /></>
     case "process":
-      return <ProcessDetail />
+      return <><ProcessDetail /><DatasetSourceData /></>
     case "flow":
-      return <FlowDetail />
+      return <><FlowDetail /><DatasetSourceData /></>
     case "flow_property":
-      return <FlowPropertyDetail />
+      return <><FlowPropertyDetail /><DatasetSourceData /></>
     case "unit_group":
-      return <UnitGroupDetail />
+      return <><UnitGroupDetail /><DatasetSourceData /></>
     case "source":
-      return <SourceDetail />
+      return <><SourceDetail /><DatasetSourceData /></>
     case "contact":
-      return <ContactDetail />
+      return <><ContactDetail /><DatasetSourceData /></>
   }
 }

@@ -1,0 +1,47 @@
+[
+  {
+    "file": "openlca-json-ld.zip",
+    "format": "openlca-json-ld",
+    "sha256": "93162cb632b4f9fa6b160a771afefa13e77aa26c4ead76c756ed8d4350cd9903",
+    "bytes": 7070,
+    "valid": true,
+    "datasets": 7,
+    "warnings": 1
+  },
+  {
+    "file": "tidas-json.zip",
+    "format": "tidas-json",
+    "sha256": "7a6f27eb59fe3fd31a33c87542fe9e22af331d4b62a133010a78a2b5c4ef2b83",
+    "bytes": 9683,
+    "valid": true,
+    "datasets": 7,
+    "warnings": 0
+  },
+  {
+    "file": "ilcd-xml.zip",
+    "format": "ilcd-xml",
+    "sha256": "fce223ec36030295b19e32188de9f61846dcebba1e02a6b87eadf4f5e100daec",
+    "bytes": 6104,
+    "valid": true,
+    "datasets": 7,
+    "warnings": 0
+  },
+  {
+    "file": "ecospold2.zip",
+    "format": "ecospold2",
+    "sha256": "80c168809f011bc299e1788c3c5ab66c98a2b9a3400821c71530de13d124d7e6",
+    "bytes": 3379,
+    "valid": true,
+    "datasets": 6,
+    "warnings": 1
+  },
+  {
+    "file": "simapro-csv.csv",
+    "format": "simapro-csv",
+    "sha256": "70d6dd7de94813b66eb3b88bf495a71ea7cc7069b95c0b5a671c3f458d56e31e",
+    "bytes": 2459,
+    "valid": true,
+    "datasets": 6,
+    "warnings": 1
+  }
+]

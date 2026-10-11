@@ -2,13 +2,47 @@
 
 Prepared for PRISM Dataset Manager · 2026-09-16
 
-Companion engine contract:
-[`life-cycle-assessment-mcp/docs/prism_lossless_import_contract.md`](https://github.com/calvinw/life-cycle-assessment-mcp/blob/main/docs/prism_lossless_import_contract.md)
+Companion engine contract (required follow-up):
+`life-cycle-assessment-mcp/docs/prism_lossless_import_contract.md`. This document
+is absent from engine main at the 2026-10-11 implementation review; do not treat
+it as an available API.
 
 ## Status
 
-Planning only. No schema, API, persistence, or UI changes described here have
-been implemented yet.
+2026-10-11: first preservation release implemented. Delivery was reordered to
+protect editing first, then archive/view complete originals. This is **not** a
+claim that the entire roadmap or every vendor dialect is complete.
+
+| Area | Release status |
+| --- | --- |
+| Seven form types | Patch retained payload; unknown root/nested/item keys survive; no-op keeps original; stale saves rejected |
+| Five input formats | Synthetic integration fixtures using real exporters and the live engine; original hashes and unsupported ZIP entries tested |
+| Persistence | Private `import-originals` bucket; exact upload verified before six-argument atomic RPC; artifacts/source links and rows commit together |
+| Interrupted imports | Failure cleanup plus daily hosted cron at 03:23 UTC, removing only unconfirmed objects older than 24 hours through the Storage API |
+| Preview/detail | All row types open; complete warning details, file index, raw/structured search, original download and complete current JSON |
+| Languages/text | Dynamic language entries and optional extra languages; full multiline text with sections; selectable text encoding |
+| Initial field display | Stored URI/timestamp, exchange and flow-property comments; unit comments retain language labels |
+| Engine locators/coverage | **Pending.** Each source record explicitly says `unassessed`, with no invented locators or field coverage |
+| Further field promotion | **Pending.** Parameters, reviews, allocation, uncertainty and results can be inspected in the original/current JSON; dedicated editors need converter contracts/tests |
+
+Confirmation also preflights accessible reference types and targets before
+upload. A converted TIDAS fixture with a missing owner is rejected, even if the
+engine declares its conversion valid. Database checks remain authoritative.
+
+Historical imports do not acquire missing originals automatically. The existing
+85 records are unchanged. New imports through this release require original
+archiving; the four-argument RPC remains available only for older clients.
+
+Limits: 25 MiB upload, 5,000 ZIP entries, 250 MiB expanded inspection. Structured
+views cap displayed scalar paths at 100,000 with an explicit notice; raw sections
+and downloads remain available. The client verifies original SHA-256 after
+upload and on source retrieval; SQL verifies object ownership/size, not the
+remote object's cryptographic digest. Source files remain private even when a
+normalized dataset is public.
+
+Tests and operation instructions: `tests/fixtures/imports/README.md`,
+`tests/lossless-import.browser.mjs`, `supabase/tests/lossless_import.py`,
+and README's original preservation section.
 
 This document is the single roadmap and acceptance source for the cross-repo
 work. The engine repository owns only the transport contract and format-specific
@@ -91,7 +125,7 @@ The required formats are:
 - Original source artifacts are read-only. Editing PRISM data never rewrites the
   historical source artifact.
 
-## Current failure modes
+## Baseline failure modes before this release
 
 ### Import preview
 

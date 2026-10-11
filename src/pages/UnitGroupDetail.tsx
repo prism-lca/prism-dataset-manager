@@ -1,3 +1,4 @@
+import { StoredAdminFields } from '@/components/ilcd/stored-admin-fields'
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { CircleCheck, CircleX } from "lucide-react"
@@ -68,7 +69,7 @@ export function UnitGroupDetail() {
 
             <TabsContent value="model" className="pt-6">
               {model.complianceDeclarations.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No compliance declarations.</p>
+                <p className="text-muted-foreground text-sm">No mapped compliance declarations. Inspect Source data for original compliance content.</p>
               ) : (
                 <Table>
                   <TableHeader>
@@ -90,6 +91,7 @@ export function UnitGroupDetail() {
             </TabsContent>
 
             <TabsContent value="admin" className="flex flex-col gap-6 pt-6">
+              <StoredAdminFields value={dataset.payload.administrativeInformation} />
               <div>
                 <p className="text-sm font-medium">Data set version</p>
                 <p className="text-muted-foreground text-sm">{admin.dataSetVersion}</p>
@@ -115,11 +117,7 @@ export function UnitGroupDetail() {
                       <TableRow key={u.dataSetInternalID}>
                         <TableCell>{u.dataSetInternalID}</TableCell>
                         <TableCell>{u.name}</TableCell>
-                        <TableCell>
-                          {u.generalComment.length > 0
-                            ? u.generalComment.map((c) => c.text).join(" / ")
-                            : "-"}
-                        </TableCell>
+                        <TableCell className="min-w-64 whitespace-normal"><LangRow label="Unit comment" value={u.generalComment} /></TableCell>
                         <TableCell>{u.meanValue ?? ""}</TableCell>
                         <TableCell>
                           {isReference ? (

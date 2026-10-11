@@ -1,3 +1,4 @@
+import { StoredAdminFields } from '@/components/ilcd/stored-admin-fields'
 import { Link, useParams } from "react-router-dom"
 import { CircleCheck, CircleX } from "lucide-react"
 import {
@@ -133,6 +134,7 @@ export function FlowDetail() {
             </TabsContent>
 
             <TabsContent value="admin" className="flex flex-col gap-6 pt-6">
+              <StoredAdminFields value={dataset.payload.administrativeInformation} />
               <div>
                 <p className="text-sm font-medium">Data set version</p>
                 <p className="text-muted-foreground text-sm">{admin.dataSetVersion}</p>
@@ -146,6 +148,7 @@ export function FlowDetail() {
                     <TableHead>Index</TableHead>
                     <TableHead>Flow property</TableHead>
                     <TableHead>Mean value (of flow property)</TableHead>
+                    <TableHead>Comment</TableHead>
                     <TableHead>Reference unit</TableHead>
                     <TableHead>Quantitative reference</TableHead>
                   </TableRow>
@@ -171,6 +174,7 @@ export function FlowDetail() {
                           )}
                         </TableCell>
                         <TableCell>{p.meanValue ?? ""}</TableCell>
+                        <TableCell className="min-w-64 whitespace-normal"><LangRow label="Flow property comment" value={p.generalComment} /></TableCell>
                         <TableCell>
                           {referenceUnitFor(
                             p.referenceToFlowPropertyDataSet.refObjectId,
@@ -190,7 +194,7 @@ export function FlowDetail() {
                   })}
                   {ds.flowProperties.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-muted-foreground">
+                      <TableCell colSpan={6} className="text-muted-foreground">
                         No flow properties yet.
                       </TableCell>
                     </TableRow>

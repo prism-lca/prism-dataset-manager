@@ -1,3 +1,4 @@
+import { StoredAdminFields } from '@/components/ilcd/stored-admin-fields'
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -99,6 +100,7 @@ export function ContactDetail() {
             </TabsContent>
 
             <TabsContent value="admin" className="flex flex-col gap-6 pt-6">
+              <StoredAdminFields value={dataset.payload.administrativeInformation} />
               {admin.referenceToOwnershipOfDataSet.shortDescription && (
                 <div>
                   <p className="text-sm font-medium">Reference to ownership of data set</p>

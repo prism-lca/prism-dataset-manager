@@ -1,3 +1,4 @@
+import { StoredAdminFields } from '@/components/ilcd/stored-admin-fields'
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Star } from "lucide-react"
@@ -85,7 +86,7 @@ export function ModelDetail({ dataset: datasetProp }: { dataset?: Dataset } = {}
 
             <TabsContent value="model" className="pt-6">
               {model.complianceDeclarations.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No compliance declarations.</p>
+                <p className="text-muted-foreground text-sm">No mapped compliance declarations. Inspect Source data for original compliance content.</p>
               ) : (
                 <Table>
                   <TableHeader>
@@ -107,6 +108,7 @@ export function ModelDetail({ dataset: datasetProp }: { dataset?: Dataset } = {}
             </TabsContent>
 
             <TabsContent value="admin" className="flex flex-col gap-6 pt-6">
+              <StoredAdminFields value={dataset.payload.administrativeInformation} />
               {admin.referenceToCommissioner.shortDescription && (
                 <div>
                   <p className="text-sm font-medium">Reference to commissioner</p>

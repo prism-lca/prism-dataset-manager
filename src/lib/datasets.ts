@@ -135,16 +135,19 @@ export async function createDataset(input: NewDataset): Promise<Dataset> {
   return data as Dataset
 }
 
-export async function updateDataset(id: string, input: NewDataset): Promise<Dataset> {
+export async function updateDataset(id: string, input: NewDataset, expectedUpdatedAt?: string): Promise<Dataset> {
   if (!supabase) {
     throw new Error("Supabase is not configured, so datasets can't be edited.")
   }
-  const { data, error } = await supabase
+  let query = supabase
     .from("datasets")
     .update(input)
     .eq("id", id)
+  if (expectedUpdatedAt) query = query.eq("updated_at", expectedUpdatedAt)
+  const { data, error } = await query
     .select()
     .single()
+  if (error?.code === "PGRST116") throw new Error("This dataset changed or is no longer editable. Reload it before saving again.")
   if (error) throw error
   return data as Dataset
 }

@@ -1,3 +1,4 @@
+import { useLosslessForm } from '@/hooks/use-lossless-form'
 import { useEffect, useState, type FormEvent } from "react"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -25,7 +26,7 @@ export function SourceForm() {
   const session = useSessionStore((s) => s.session)
   const navigate = useNavigate()
 
-  const [ds, setDs] = useState<SourceDataSet>(() => toSourceDataSet(undefined))
+  const { value: ds, setValue: setDs, loadDataset, prepareInput } = useLosslessForm(toSourceDataSet)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [existing, setExisting] = useState<Dataset | null | undefined>(
@@ -36,9 +37,9 @@ export function SourceForm() {
     if (!id) return
     getDataset(id).then((d) => {
       setExisting(d ?? null)
-      if (d) setDs(toSourceDataSet(d.payload))
+      if (d) loadDataset(d)
     })
-  }, [id])
+  }, [id, loadDataset])
 
   if (!session) return <Navigate to="/sign-in" replace />
   if (id && existing === undefined) return null
@@ -71,8 +72,8 @@ export function SourceForm() {
     const description = getLangText(info.sourceDescriptionOrComment, "en") || null
 
     try {
-      const input = { type: "source" as const, name, description, payload: ds as unknown as Record<string, unknown> }
-      const dataset = id ? await updateDataset(id, input) : await createDataset(input)
+      const input = prepareInput({ type: "source" as const, name, description, payload: ds as unknown as Record<string, unknown> })
+      const dataset = id ? await updateDataset(id, input, existing?.updated_at) : await createDataset(input)
       navigate(`/open-data/source/${dataset.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save.")
@@ -93,7 +94,7 @@ export function SourceForm() {
             ), so {id ? "editing" : "adding"} sources is unavailable.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form noValidate={Boolean(existing)} onSubmit={handleSubmit} className="flex flex-col gap-4">
             <Tabs defaultValue="info">
               <TabsList className="h-auto w-full flex-wrap items-start justify-start gap-2 p-2 group-data-horizontal/tabs:h-auto [&>*]:flex-none">
                 <TabsTrigger value="info">Source information</TabsTrigger>

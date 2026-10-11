@@ -1,3 +1,4 @@
+import { StoredAdminFields } from '@/components/ilcd/stored-admin-fields'
 import { Link, useParams } from "react-router-dom"
 import {
   Table,
@@ -97,7 +98,7 @@ export function FlowPropertyDetail() {
                 </div>
               )}
               {model.complianceDeclarations.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No compliance declarations.</p>
+                <p className="text-muted-foreground text-sm">No mapped compliance declarations. Inspect Source data for original compliance content.</p>
               ) : (
                 <Table>
                   <TableHeader>
@@ -119,6 +120,7 @@ export function FlowPropertyDetail() {
             </TabsContent>
 
             <TabsContent value="admin" className="flex flex-col gap-6 pt-6">
+              <StoredAdminFields value={dataset.payload.administrativeInformation} />
               <div>
                 <p className="text-sm font-medium">Data set version</p>
                 <p className="text-muted-foreground text-sm">{admin.dataSetVersion}</p>
