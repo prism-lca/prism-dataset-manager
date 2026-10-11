@@ -9,6 +9,39 @@ history of what shipped.
 
 Status legend: ✅ done · 🚧 in progress · 🔜 not started
 
+## 2026-10-11 — Current status and next work 🚧 in progress
+
+Review against repository code, `WORKLOG.md`, and PR #1 on 2026-10-11:
+
+- **Database relationship stages: ✅ complete and deployed.**
+  [1010stage.md](1010stage.md) records acceptance and rollout of all four stages.
+  Do not rerun the deployed migrations or historical reseeding instructions
+  below. September notes describe the state at that date, not current actions.
+- **Original-file preservation and safe editing: implemented; frontend release
+  pending.** The user authorized direct integration into `main` on 2026-10-11.
+  [PR #1](https://github.com/prism-lca/prism-dataset-manager/pull/1) contains the
+  implementation. Its two database migrations are already live according to
+  the rollout log; frontend deployment still needs verification.
+- **Complete engine provenance and mapping coverage: 🔜 pending.** Source links
+  currently report `unassessed`. Synthetic five-format fixtures establish the
+  tested preservation cases, not complete vendor-format or field coverage.
+
+Next work, in order:
+
+1. Integrate the preservation release into `main` under the user's explicit
+   authorization, then verify the GitHub Pages deployment.
+2. Implement and test the engine provenance contract: per-row source locators,
+   warning selectors, and field-level mapping coverage. The companion contract
+   is absent from engine main per the latest implementation review; establish
+   it before depending on new response fields.
+3. Extend fixtures with real or sanitized examples and measurable source-path
+   coverage, then promote supported fields into dedicated UI with edit/export
+   round-trip tests. Full per-type ILCD validation remains separate work.
+
+[PLAN_LOSSLESS_IMPORT_UI.md](PLAN_LOSSLESS_IMPORT_UI.md) owns the detailed
+cross-repository roadmap and acceptance criteria. Keep the October database
+stages closed; continue the remaining preservation/provenance work there.
+
 ---
 
 ## 2026-09-07 — Initial scaffold ✅ done
@@ -348,12 +381,12 @@ check tab names/counts for types not yet screenshotted.
   live dataset over time. `scripts/export_ecospold.py` / `export_tidas.py`
   are the source of truth; the committed zips are not.
 
-## 2026-10-10 — Supabase table design recommendation 🔜 proposed
+## 2026-10-10 — Supabase table design recommendation ✅ implemented (2026-10-11)
 
 Reassessed the September 8 decision against the current frontend, ILCD types,
-multi-user migration, and import RPC. This is a design recommendation; no
-database migration or application change is included. Live schema, catalog
-size, and query performance were not rechecked during this review.
+multi-user migration, and import RPC. The original October 10 design review
+did not apply migrations or recheck live state. The implementation and
+production acceptance followed on October 11, as recorded below.
 
 Implementation follow-up: see [1010stage.md](1010stage.md). The migration and
 frontend are implemented and tested, including a live-catalog-copy rehearsal.

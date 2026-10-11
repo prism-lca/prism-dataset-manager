@@ -4,6 +4,16 @@ Status: all four stages completed and deployed on 2026-10-11. Local PostgreSQL
 15 acceptance, live PostgreSQL 17 migration, and deployed browser/REST checks
 passed. Live app: https://prism-lca.github.io/prism-dataset-manager/.
 
+Review on 2026-10-11: this document closes the relationship-table rollout,
+not the later original-file preservation release. That follow-up adds
+`import_artifacts` and `dataset_source_records` plus private Storage; its database
+migrations are live according to `WORKLOG.md`; the user authorized direct main
+integration of frontend PR #1, with deployment verification still pending. See [plan.md](plan.md) for current sequencing and
+[PLAN_LOSSLESS_IMPORT_UI.md](PLAN_LOSSLESS_IMPORT_UI.md) for remaining acceptance.
+The three-table target below describes this rollout's scope, not the complete
+application schema after the preservation migrations. Do not reapply the
+October 10 migration: later migrations extend the import RPC.
+
 ## Implementation and rollout status
 
 - Migration: `supabase/migrations/202610100001_dataset_references.sql`.

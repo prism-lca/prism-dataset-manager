@@ -2,6 +2,13 @@
 
 ## 2026-10-11
 
+- Reviewed `plan.md` and `1010stage.md` against repository and PR metadata;
+  corrected the stale proposed status and distinguished the completed
+  relationship rollout from the preservation release. The user authorized
+  direct main integration; fetched main also contains the maintainer-workflow
+  revert. Frontend deployment verification remains pending. Historical
+  reseeding instructions are not current rollout actions. No hosted database
+  changes.
 - Live built-frontend acceptance passed the actual conversion engine and
   Supabase for five formats, exact download hashes, refresh, ownership/immutability,
   all seven no-op/one-field saves, hidden-field deletion cancellation, stale-save
