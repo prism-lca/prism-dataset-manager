@@ -36,3 +36,8 @@ Thumbs.db
 
 # Supabase CLI local state
 supabase/.temp/
+
+# Ad hoc screenshots and manual import/export artifacts
+/Screenshot *.png
+/scripts/*.zip
+/scripts/tidas-*-report.json

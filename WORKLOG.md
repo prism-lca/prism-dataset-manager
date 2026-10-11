@@ -2,6 +2,11 @@
 
 ## 2026-10-11
 
+- Removed six unused screenshots, four obsolete manual export packages, three
+  generated conversion/validation reports, and the local import log. Added
+  ignore rules for these ad hoc artifacts. Retained all automated import
+  fixtures and export scripts; updated the historical cleanup item in the plan.
+
 - Reviewed `plan.md` and `1010stage.md` against repository and PR metadata;
   corrected the stale proposed status and distinguished the completed
   relationship rollout from the preservation release. The user authorized
