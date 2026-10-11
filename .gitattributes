@@ -1,0 +1,2 @@
+# Raw import fixtures are byte-exact, including BOM, CRLF and final blank lines.
+tests/fixtures/imports/*.csv -text -diff
