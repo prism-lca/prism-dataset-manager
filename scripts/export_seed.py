@@ -208,6 +208,8 @@ def render(rows: list[dict], legacy_ids: set[str]) -> str:
         "  visibility = 'public',\n"
         "  import_batch_id = null,\n"
         "  created_at = excluded.created_at;\n\n"
+        "-- Flush deferred graph checks before changing table metadata on a migrated DB.\n"
+        "set constraints all immediate;\n"
         "alter table datasets alter column visibility set default 'private';\n\n"
         "alter table datasets drop constraint if exists datasets_private_owner_check;\n"
         "alter table datasets add constraint datasets_private_owner_check\n"

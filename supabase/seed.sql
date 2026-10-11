@@ -199,6 +199,8 @@ on conflict (id) do update set
   import_batch_id = null,
   created_at = excluded.created_at;
 
+-- Flush deferred graph checks before changing table metadata on a migrated DB.
+set constraints all immediate;
 alter table datasets alter column visibility set default 'private';
 
 alter table datasets drop constraint if exists datasets_private_owner_check;

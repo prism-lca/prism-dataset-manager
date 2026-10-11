@@ -41,6 +41,10 @@ function toPreviewDataset(row: ImportedRow): Dataset {
     visibility: "private",
     import_batch_id: null,
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    schema_version: 1,
+    source_id: row.source_id,
+    source_version: row.source_version ?? null,
   }
 }
 

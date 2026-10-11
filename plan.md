@@ -355,6 +355,13 @@ multi-user migration, and import RPC. This is a design recommendation; no
 database migration or application change is included. Live schema, catalog
 size, and query performance were not rechecked during this review.
 
+Implementation follow-up: see [1010stage.md](1010stage.md). The migration and
+frontend are implemented and tested, including a live-catalog-copy rehearsal.
+On 2026-10-11 the refreshed management token enabled a full logical backup and
+production migration. All 85 datasets and the import batch were preserved,
+and live integrity/permissions and signed-in frontend acceptance passed.
+Frontend release is pending; see the staged plan for rollout details.
+
 ### Recommendation: one dataset table, with relational support tables
 
 Keep all seven dataset categories in `datasets`. Keep `import_batches`, and

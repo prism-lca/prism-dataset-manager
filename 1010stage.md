@@ -1,6 +1,54 @@
 # October 10 — Supabase implementation stages
 
-Status: proposed design; no database changes applied.
+Status: production migration and signed-in browser/REST acceptance completed
+on 2026-10-11. Frontend release is pending. Local PostgreSQL 15 acceptance and
+the live PostgreSQL 17 rollout both passed.
+
+## Implementation and rollout status
+
+- Migration: `supabase/migrations/202610100001_dataset_references.sql`.
+- Adds the relationship table, timestamps/schema version, source-ID/version
+  fields, private trigger functions, read policies, and dependency lookup RPC.
+- Ordinary writes synchronize relationships automatically. Imports preserve
+  retry reports and validate the complete graph at transaction end.
+- Known reference roles enforce expected types. Unknown extension references
+  must supply a valid dataset type. Null references do not create edges.
+- Source IDs are retained; source versions remain null unless the engine
+  explicitly supplies them. Normalized document versions are not assumed to be
+  original source versions.
+- List pages use 50-row pages and omit payloads. Reference pickers fetch small
+  projections; Process, Flow, and Flow Property details fetch only their
+  reachable dependencies. Export reads now paginate to avoid server truncation.
+- Local tests cover user isolation, public reads, forbidden graph links,
+  wrong-type targets, edit synchronization, deletion protection, atomic import
+  rollback, retry behavior, cyclic references, and dependency queries.
+- TypeScript/build, lint, and all 10 frontend unit tests passed. The seed
+  generator and checked-in seed now flush deferred graph checks before their
+  final table alterations, so reseeding also works after this migration.
+- Live read-only audit: 85 datasets, 145 internal references, zero issues.
+  A catalog/import-batch snapshot was exported outside the repository with
+  restricted permissions. The migration was exercised on a local copy of that
+  snapshot and preserved every existing document, owner, and visibility.
+
+The October migration has been applied once through the Management API after
+the September migration. A full logical database archive and role definitions
+(without role passwords) were saved outside the repository before migration:
+`/workspaces/tiangong-simple-backups/20261011-pre-dataset-references/`.
+The archive includes Auth data, decoded successfully, and has a checksum
+manifest. Storage object files are not included in a database backup.
+All 85 original datasets and the one import batch were preserved exactly.
+Read-only verification confirmed 145 valid, payload-consistent reference rows
+and correct permissions. Temporary backup login and smoke-test accounts/data
+were removed. Do not rerun either migration on this deployed project. Never
+put management tokens or service-role keys in frontend configuration.
+
+Catalog writes currently use a transaction-level advisory lock to serialize
+graph maintenance. This favors correctness for today's small catalog; evaluate
+finer-grained locking if write throughput becomes a measured limitation.
+
+Full per-type JSON Schema validation, a complete source-artifact archive, and
+lossless form editing remain separate work. This implementation validates basic
+dataset fields and internal links, without claiming complete ILCD conformance.
 
 ## Clarifying the main table
 
@@ -34,6 +82,17 @@ the underlying row-level security.
 
 ## Stage 1 — Strengthen the existing main table
 
+Acceptance on 2026-10-11: passed on a fresh local PostgreSQL 15 database.
+`supabase/tests/dataset_main_table.sql` verifies defaults, automatic update
+timestamps, preservation of nested payloads during metadata edits, rejection of
+empty/null names, null/non-object payloads, invalid types/schema versions, and
+changes to dataset identity or type. Migration rehearsal preserved all 77
+checked-in seed rows, including payloads, owners, visibility, and existing
+metadata. Existing reference integration checks also passed. This acceptance
+uses the repository seed; it does not establish the current live database state
+or complete per-type ILCD schema validation. Production rollout is recorded in
+Stage 4 below.
+
 Keep `datasets` and its existing columns:
 
 ```text
@@ -58,6 +117,16 @@ subset of ILCD supported by this application. Ordinary edits should not change
 dataset identity or type.
 
 ## Stage 2 — Add the supporting relationship table
+
+Acceptance on 2026-10-11: passed on a fresh local PostgreSQL 15 database.
+`supabase/tests/dataset_relationship_table.sql` verifies valid backfill
+endpoints, the target lookup index, exact array/escaped JSON Pointer paths,
+separate edges for repeated targets, null/free-text preservation, path
+uniqueness, metadata-edit stability, payload-edit replacement, failed-edit
+rollback, protected target deletion, source-delete cascading, and browser
+write restrictions. The seed produced 137 reference rows for 77 datasets;
+all acceptance fixtures were rolled back. Stage 1 and existing reference
+integration checks also passed. Production rollout is recorded in Stage 4.
 
 Create `dataset_references` with:
 
@@ -87,6 +156,19 @@ The JSON payload remains authoritative. Reference rows are extracted and
 maintained by the database, not edited independently by browser clients.
 
 ## Stage 3 — Maintain and validate references on every write
+
+Acceptance on 2026-10-11: passed on a fresh local PostgreSQL 15 database.
+Expanded `supabase/tests/dataset_references.sql` checks mixed valid/invalid
+batch rollback, exact retry reports and row counts, hidden private documents
+and import reports, zero-row cross-user edits/deletes, cross-user batch reuse
+rejection, and immutable ownership/visibility for ordinary users. Existing
+checks cover permitted/forbidden links, source-before-target imports, wrong
+types, incoming-edge visibility changes, and cycles.
+`supabase/tests/import_transactions.py` uses independent local connections to
+verify rollback at actual COMMIT and two concurrent submissions yielding one
+batch, two datasets, one edge, and an unchanged retry report. Fixtures were
+removed; Stage 1 and Stage 2 checks also passed. These are local database
+acceptance checks; production/browser acceptance is recorded in Stage 4.
 
 Forms currently write directly to `datasets`; imports use `import_datasets`.
 Both paths must use the same database validation. Use database triggers backed
@@ -120,6 +202,29 @@ IDs and versions in explicit provenance fields; do not make source IDs globally
 unique because different users may import copies of the same source.
 
 ## Stage 4 — Roll out and improve queries
+
+Preparation on 2026-10-11: live read-only audit found 85 datasets and 145
+references with no issues. A new restricted catalog/import-batch snapshot was
+saved outside the repository. Rehearsal on that snapshot preserved all original
+dataset columns and the one import batch, created 145 relationship rows, and
+passed all three local acceptance suites plus real-commit/concurrent-retry
+checks. This snapshot is not a full database backup.
+
+Production acceptance on 2026-10-11: after refreshing the management token,
+confirmed PostgreSQL 17.6, the September schema, and no available automatic
+backup. Created/decoded a full logical database archive and saved role
+definitions using a temporary CLI login, then removed that login. Applied
+`supabase/migrations/202610100001_dataset_references.sql` once transactionally.
+`supabase/tests/verify_dataset_references_rollout.sql` passed on production:
+85 datasets, 145 references, one batch. Compared every original dataset field
+and import batch before/after migration and after smoke cleanup: identical.
+
+Built frontend browser acceptance against real Supabase passed signed-in
+create/edit, pagination controls, import confirmation/provenance/reference
+remapping, dependency RPC, deletion protection, two-user/anonymous isolation,
+atomic rollback, and retry reports. Only the engine conversion response was
+stubbed; auth and persistence were real. Test accounts, datasets, and batches
+were removed. Frontend deployment and deployed-browser verification remain.
 
 1. Back up the deployed database and inspect its actual schema.
 2. Audit existing payloads for missing, wrong-type, or inaccessible targets.

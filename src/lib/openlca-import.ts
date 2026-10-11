@@ -5,6 +5,7 @@ const ENGINE_URL = import.meta.env.VITE_LCA_ENGINE_URL ?? "https://lca.mathplosi
 export interface ImportedRow {
   temporary_id: string
   source_id: string
+  source_version?: string | null
   id: string
   type: DatasetType
   name: string

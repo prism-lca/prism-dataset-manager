@@ -28,6 +28,48 @@ export interface Dataset {
   visibility: "public" | "private"
   import_batch_id: string | null
   created_at: string
+  updated_at: string
+  schema_version: number
+  source_id: string | null
+  source_version: string | null
+}
+
+export type DatasetSummary = Pick<Dataset,
+  "id" | "type" | "name" | "description" | "created_by" | "visibility" | "created_at">
+
+const SUMMARY_COLUMNS = "id,type,name,description,created_by,visibility,created_at"
+
+export async function listDatasetSummaries(
+  type: DatasetType, page = 0, pageSize = 50, lookahead = false,
+): Promise<DatasetSummary[]> {
+  const { data, error } = await requireSupabase().from("datasets")
+    .select(SUMMARY_COLUMNS).eq("type", type)
+    .order("created_at", { ascending: false }).order("id")
+    .range(page * pageSize, (page + 1) * pageSize - 1 + Number(lookahead))
+  if (error) throw error
+  return data as DatasetSummary[]
+}
+
+export async function listDatasetOptions(type: DatasetType): Promise<DatasetSummary[]> {
+  const rows: DatasetSummary[] = []
+  for (let page = 0; ; page++) {
+    const batch = await listDatasetSummaries(type, page, 500)
+    rows.push(...batch)
+    if (batch.length < 500) return rows
+  }
+}
+
+export async function getDatasetDependencies(id: string): Promise<Dataset[]> {
+  const rows: Dataset[] = []
+  const pageSize = 500
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await requireSupabase()
+      .rpc("dataset_dependencies", { p_dataset_id: id })
+      .order("id").range(offset, offset + pageSize - 1)
+    if (error) throw error
+    rows.push(...data as Dataset[])
+    if (data.length < pageSize) return rows
+  }
 }
 
 export interface DatasetTypeInfo {
@@ -51,13 +93,16 @@ export function getDatasetTypeInfo(type: string): DatasetTypeInfo | undefined {
 }
 
 export async function listDatasets(type: DatasetType): Promise<Dataset[]> {
-  const { data, error } = await requireSupabase()
-    .from("datasets")
-    .select("*")
-    .eq("type", type)
-    .order("created_at", { ascending: false })
-  if (error) throw error
-  return data as Dataset[]
+  const rows: Dataset[] = []
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await requireSupabase().from("datasets")
+      .select("*").eq("type", type)
+      .order("created_at", { ascending: false }).order("id")
+      .range(offset, offset + 499)
+    if (error) throw error
+    rows.push(...data as Dataset[])
+    if (data.length < 500) return rows
+  }
 }
 
 export async function getDataset(id: string): Promise<Dataset | undefined> {
@@ -109,5 +154,8 @@ export async function deleteDataset(id: string): Promise<void> {
     throw new Error("Supabase is not configured, so datasets can't be deleted.")
   }
   const { error } = await supabase.from("datasets").delete().eq("id", id)
+  if (error?.code === "23503") {
+    throw new Error("This dataset is still referenced by another dataset. Remove those references before deleting it.")
+  }
   if (error) throw error
 }

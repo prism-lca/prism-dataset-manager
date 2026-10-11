@@ -27,6 +27,11 @@ Supabase must be configured (below) before the app will load any data — withou
    `supabase/migrations/202609160001_multi_user_import.sql` to install the
    idempotent atomic-import RPC (the migration is also safe to apply to an
    existing deployment).
+   Finally run `supabase/migrations/202610100001_dataset_references.sql` to
+   backfill and enforce dataset relationships and install dependency lookup.
+   Apply this migration before deploying the frontend changes that use it.
+   For an existing project, run only the new migration, once; do not re-run
+   the older import migration afterward because it replaces the import RPC.
 3. Copy `.env.example` to `.env` and fill in your project's URL and anon key (Project Settings → API):
    ```
    VITE_SUPABASE_URL=
@@ -41,6 +46,50 @@ python3 scripts/export_seed.py
 ```
 
 The exporter reads the public dataset fields using the Supabase URL and anon key from `.env`. Review and commit the resulting `supabase/seed.sql`.
+
+### Dataset relationships
+
+All seven categories remain rows in `datasets`. `import_batches` tracks imports,
+and `dataset_references` is a database-maintained index of links inside each
+payload. Forms continue saving payloads normally; triggers synchronize the
+links and enforce target types and ownership. Referenced records cannot be
+deleted until their incoming links are removed. Imports validate at transaction
+end, allowing forward references within a batch.
+
+For a complete read-only live audit, with the service-role key available only
+in the local environment:
+
+```
+node scripts/audit_dataset_references.mjs
+node scripts/audit_dataset_references.mjs --backup
+```
+
+`--backup` saves a restricted-permission catalog/import-batch JSON snapshot in a
+new temporary directory outside this repository. It does not back up Supabase
+Auth, Storage, or the complete database schema. Obtain a full project backup
+before production migration. The migration is transactional and aborts on
+invalid existing references instead of silently changing documents.
+
+To verify the schema on a fresh disposable local PostgreSQL database (never run
+`bootstrap.sql` on the live project):
+
+```
+psql -X -v ON_ERROR_STOP=1 -d YOUR_TEST_DATABASE \
+  -f supabase/tests/bootstrap.sql \
+  -f supabase/seed.sql \
+  -f supabase/migrations/202609160001_multi_user_import.sql \
+  -f supabase/migrations/202610100001_dataset_references.sql \
+  -f supabase/tests/dataset_main_table.sql \
+  -f supabase/tests/dataset_relationship_table.sql \
+  -f supabase/tests/dataset_references.sql
+python3 supabase/tests/import_transactions.py YOUR_TEST_DATABASE
+```
+
+Run both commands as the local PostgreSQL administrator. The Python check
+opens separate local connections to test COMMIT rollback and concurrent import
+retries, then removes its fixtures. Use only a disposable local database.
+
+See [1010stage.md](1010stage.md) for rollout status and the implementation stages.
 
 ### Deploying to GitHub Pages
 

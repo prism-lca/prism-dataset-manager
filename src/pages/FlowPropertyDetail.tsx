@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import {
   Table,
@@ -10,26 +9,15 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getDataset, listDatasets, type Dataset } from "@/lib/datasets"
+import { useDatasetGraph } from "@/hooks/use-dataset-graph"
 import { toFlowPropertyDataSet, toUnitGroupDataSet } from "@/lib/ilcd"
 import { LangRow } from "@/components/ilcd/lang-row"
 
 export function FlowPropertyDetail() {
   const { id } = useParams<{ id: string }>()
-  const [dataset, setDataset] = useState<Dataset | null | undefined>(undefined)
-  const [unitGroupsById, setUnitGroupsById] = useState<Map<string, Dataset>>(new Map())
+  const { dataset, dependencies: unitGroupsById, error } = useDatasetGraph(id)
 
-  useEffect(() => {
-    if (!id) return
-    getDataset(id).then((d) => setDataset(d ?? null))
-  }, [id])
-
-  useEffect(() => {
-    listDatasets("unit_group").then((rows) =>
-      setUnitGroupsById(new Map(rows.map((r) => [r.id, r]))),
-    )
-  }, [])
-
+  if (error) return <p className="text-destructive" role="alert">{error}</p>
   if (dataset === undefined) return null
   if (dataset === null) {
     return <p className="text-muted-foreground">Not found.</p>

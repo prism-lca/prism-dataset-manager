@@ -22,6 +22,21 @@ function row(patch: Partial<ImportedRow>): ImportedRow {
 }
 
 describe("prepareImportRows", () => {
+  it("retains source identity and version independently of remapped UUIDs", () => {
+    const [prepared] = prepareImportRows([row({
+      source_version: "01.02.003",
+      payload: { administrativeInformation: { dataSetVersion: "01.02.003" } },
+    })], () => IDS[0])
+    expect(prepared.id).toBe(IDS[0])
+    expect(prepared.source_id).toBe("source-flow")
+    expect(prepared.source_version).toBe("01.02.003")
+  })
+  it("does not infer an original source version from a normalized payload", () => {
+    const [prepared] = prepareImportRows([row({
+      payload: { administrativeInformation: { dataSetVersion: "01.02.003" } },
+    })], () => IDS[0])
+    expect(prepared.source_version).toBeNull()
+  })
   it("allocates new IDs and rewrites source, normalized, and temporary aliases", () => {
     let next = 0
     const rows = prepareImportRows(

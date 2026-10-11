@@ -7,7 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { getDatasetTypeInfo, listDatasets, type Dataset } from "@/lib/datasets"
+import { getDatasetTypeInfo, listDatasetOptions, type DatasetSummary } from "@/lib/datasets"
+import { useSessionStore } from "@/state/session"
 import type { DatasetRef } from "@/lib/ilcd"
 
 const NONE = "__none__"
@@ -20,12 +21,20 @@ interface DatasetRefFieldProps {
 }
 
 export function DatasetRefField({ label, value, onChange, required }: DatasetRefFieldProps) {
-  const [options, setOptions] = useState<Dataset[]>([])
+  const [options, setOptions] = useState<DatasetSummary[]>([])
+  const [error, setError] = useState<string>()
+  const userId = useSessionStore((s) => s.session?.user.id)
   const typeInfo = getDatasetTypeInfo(value.type)
 
   useEffect(() => {
-    listDatasets(value.type).then(setOptions)
-  }, [value.type])
+    let cancelled = false
+    listDatasetOptions(value.type).then((rows) => {
+      if (!cancelled) { setOptions(rows); setError(undefined) }
+    }).catch(() => {
+      if (!cancelled) { setOptions([]); setError("Couldn't load dataset choices.") }
+    })
+    return () => { cancelled = true }
+  }, [value.type, userId])
 
   const unresolved =
     value.refObjectId && !options.some((o) => o.id === value.refObjectId)
@@ -68,6 +77,7 @@ export function DatasetRefField({ label, value, onChange, required }: DatasetRef
           ))}
         </SelectContent>
       </Select>
+      {error && <p className="text-destructive text-sm" role="alert">{error}</p>}
     </div>
   )
 }

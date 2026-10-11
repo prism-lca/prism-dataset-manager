@@ -1,5 +1,80 @@
 # Work Log
 
+## 2026-10-11
+
+- After the user updated the management token, completed the production
+  migration on PostgreSQL 17.6. With no available automatic backups, used a
+  temporary CLI login and PostgreSQL 17 pg_dump/pg_dumpall to save a full
+  logical database archive, role definitions (without passwords), and hashes
+  outside the repository. Archive decoded successfully and includes Auth data.
+  Removed the temporary login. All 85 datasets and the existing import batch
+  preserved exactly; production read-only verification confirms 145 edges,
+  payload consistency, RLS and RPC permissions.
+- Built-frontend browser/live-REST smoke passed signed-in create/edit,
+  pagination controls, import confirmation, source provenance, reference
+  remapping/dependencies, protected deletion, user/anonymous isolation,
+  rollback, and retries. Engine conversion was stubbed; auth/persistence were
+  real. Removed all temporary users/data/batches and rechecked original
+  catalog preservation. Frontend test/build/lint pass; release is next.
+- Prepared Stage 4 with a fresh live read-only audit and restricted snapshot:
+  85 datasets, 145 references, no issues, one import batch. Rehearsed migration
+  on the snapshot locally and compared all original dataset columns and batches;
+  all preserved. All local acceptance suites and transaction checks passed.
+  Added read-only production verification SQL and documented the rollout gate.
+  Current management token still returns HTTP 401; relationship table is absent
+  from the REST schema cache (PGRST205). Full backup inspection, production
+  migration, deployment, and signed-in browser acceptance remain pending.
+- Completed Stage 3 local acceptance. Expanded graph checks for mixed-batch
+  rollback, exact retry reports/no duplicate rows, cross-user reads/writes and
+  batch reuse, and protected ownership/visibility. Added an independent-session
+  Python/psql check: an invalid graph fails at actual COMMIT without persisting
+  batch/data/edges; concurrent same-batch submissions produce one original
+  report and one identical idempotent retry (one batch/two datasets/one edge).
+  All SQL acceptance suites passed on a fresh PostgreSQL 15 database. Fixtures
+  were rolled back or removed. Production and signed-in browser checks remain.
+- Completed Stage 2 local acceptance in a fresh PostgreSQL 15 database. Added
+  relationship-table checks for array/escaped paths, repeated targets, null
+  free-text preservation, unique paths, indexed target lookup, metadata-edit
+  stability, payload replacement, failed-edit rollback, deletion behavior, and
+  denied browser writes. Seed migration produced 77 datasets/137 references.
+  Stage 1, Stage 2, and existing graph integration checks all passed; fixture
+  writes rolled back. No production writes or deployment.
+- Completed Stage 1 local acceptance for `1010stage.md`. Added transactional
+  main-table checks for defaults, timestamps, document preservation, invalid
+  names/payloads/types/schema versions, and immutable dataset identity/type.
+- Rehearsed seed + both migrations in a new disposable PostgreSQL 15 database.
+  Compared all original dataset columns before/after the October migration:
+  all 77 seed rows were preserved. Main-table acceptance and existing reference
+  integration checks passed. Updated the plan and local verification command.
+- No production database writes or deployment. Current live data still needs
+  its own backup/audit before rollout; full ILCD validation remains separate.
+
+## 2026-10-10
+
+- Implemented the shared-dataset/supporting-table design in
+  `202610100001_dataset_references.sql`: derived reference rows, JSON Pointer
+  paths, expected-type validation, owner/visibility checks, protected target
+  deletion, automatic edit synchronization, and deferred atomic-import checks.
+  Added timestamps/schema version, retained source IDs and explicit source
+  versions, and a cycle-safe dependency RPC under invoker RLS.
+- Catalog lists now fetch 50 summaries per page. Reference choices omit
+  payloads. Process/Flow/Flow Property details load reachable dependencies,
+  and export queries paginate beyond server row limits. Delete errors explain
+  how to remove incoming references first.
+- Added a read-only audit/snapshot script and local PostgreSQL bootstrap and
+  integration checks. Audited the live catalog: 85 rows and 145 references,
+  zero issues. Exported a permission-restricted catalog/import-batch snapshot
+  outside the repository, rehearsed migration on its local copy, and verified
+  every existing document and ownership field was preserved.
+- Verified type checks, anonymous/public and two-user isolation, ordinary
+  updates, protected deletes, rollback, retries, cycles, and dependency lookup
+  in PostgreSQL 15. Build, lint, and 10 frontend tests pass. Fixed deferred
+  trigger flushing in both the seed and its generator; post-migration reseeding
+  passes as well.
+- Live migration remains pending: the existing management token returned HTTP
+  401 (invalid token). No production writes or frontend deployment performed.
+  Updated `1010stage.md` and README with the exact migration/rollout sequence.
+
 ## 2026-09-16
 - Started `PLAN_MULTI_USER_IMPORT.md` implementation without changing the live
   Supabase project. Added an additive migration that turns the existing

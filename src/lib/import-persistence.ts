@@ -11,6 +11,8 @@ export interface PreparedImportRow {
   name: string
   description: string | null
   payload: Record<string, unknown>
+  source_id: string
+  source_version: string | null
 }
 
 export interface ImportedDatasetSummary {
@@ -98,6 +100,8 @@ export function prepareImportRows(
     name: row.name,
     description: row.description || null,
     payload: rewriteReferences(row.payload, aliases) as Record<string, unknown>,
+    source_id: row.source_id,
+    source_version: row.source_version ?? null,
   }))
 }
 

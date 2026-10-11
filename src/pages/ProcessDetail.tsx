@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { CircleCheck, CircleX } from "lucide-react"
 import {
@@ -11,7 +10,8 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getDataset, listDatasets, type Dataset } from "@/lib/datasets"
+import { type Dataset } from "@/lib/datasets"
+import { useDatasetGraph } from "@/hooks/use-dataset-graph"
 import {
   toFlowDataSet,
   toFlowPropertyDataSet,
@@ -150,26 +150,12 @@ function ExchangeTable({
 
 export function ProcessDetail() {
   const { id } = useParams<{ id: string }>()
-  const [dataset, setDataset] = useState<Dataset | null | undefined>(undefined)
-  const [flowsById, setFlowsById] = useState<Map<string, Dataset>>(new Map())
-  const [flowPropertiesById, setFlowPropertiesById] = useState<Map<string, Dataset>>(new Map())
-  const [unitGroupsById, setUnitGroupsById] = useState<Map<string, Dataset>>(new Map())
+  const { dataset, dependencies, error } = useDatasetGraph(id)
+  const flowsById = dependencies
+  const flowPropertiesById = dependencies
+  const unitGroupsById = dependencies
 
-  useEffect(() => {
-    if (!id) return
-    getDataset(id).then((d) => setDataset(d ?? null))
-  }, [id])
-
-  useEffect(() => {
-    listDatasets("flow").then((rows) => setFlowsById(new Map(rows.map((r) => [r.id, r]))))
-    listDatasets("flow_property").then((rows) =>
-      setFlowPropertiesById(new Map(rows.map((r) => [r.id, r]))),
-    )
-    listDatasets("unit_group").then((rows) =>
-      setUnitGroupsById(new Map(rows.map((r) => [r.id, r]))),
-    )
-  }, [])
-
+  if (error) return <p className="text-destructive" role="alert">{error}</p>
   if (dataset === undefined) return null
   if (dataset === null) {
     return <p className="text-muted-foreground">Not found.</p>

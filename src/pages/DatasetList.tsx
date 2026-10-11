@@ -21,10 +21,10 @@ import {
 } from "@/components/ui/dialog"
 import {
   deleteDataset,
-  type Dataset,
+  type DatasetSummary,
   type DatasetType,
   getDatasetTypeInfo,
-  listDatasets,
+  listDatasetSummaries,
 } from "@/lib/datasets"
 import { useSessionStore } from "@/state/session"
 
@@ -32,15 +32,29 @@ export function DatasetList() {
   const { type } = useParams<{ type: string }>()
   const typeInfo = type ? getDatasetTypeInfo(type) : undefined
   const session = useSessionStore((s) => s.session)
-  const [datasets, setDatasets] = useState<Dataset[]>([])
-  const [deleteTarget, setDeleteTarget] = useState<Dataset | null>(null)
+  const [datasets, setDatasets] = useState<DatasetSummary[]>([])
+  const [cursor, setCursor] = useState({ type, page: 0 })
+  const page = cursor.type === type ? cursor.page : 0
+  const [hasMore, setHasMore] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<DatasetSummary | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!typeInfo) return
-    listDatasets(typeInfo.type as DatasetType).then(setDatasets)
-  }, [typeInfo])
+    let cancelled = false
+    setLoading(true)
+    setLoadError(null)
+    setDatasets([])
+    listDatasetSummaries(typeInfo.type as DatasetType, page, 50, true).then((rows) => {
+      if (!cancelled) { setDatasets(rows.slice(0, 50)); setHasMore(rows.length > 50) }
+    }).catch(() => {
+      if (!cancelled) setLoadError("Couldn't load datasets. Please try again.")
+    }).finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [typeInfo, page, session?.user.id])
 
   if (!typeInfo) {
     return <Navigate to="/open-data/process" replace />
@@ -73,6 +87,7 @@ export function DatasetList() {
         </Button>
       </CardHeader>
       <CardContent>
+        {loadError && <p className="text-destructive text-sm" role="alert">{loadError}</p>}
         <Table>
           <TableHeader>
             <TableRow>
@@ -162,12 +177,19 @@ export function DatasetList() {
             {datasets.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-muted-foreground">
-                  No {typeInfo.label.toLowerCase()} yet.
+                  {loading ? "Loading..." : loadError ? "Unable to load data." : `No ${typeInfo.label.toLowerCase()} on this page.`}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        <div className="mt-4 flex items-center justify-end gap-3">
+          <Button variant="outline" size="sm" disabled={page === 0 || loading}
+            onClick={() => setCursor({ type, page: page - 1 })}>Previous</Button>
+          <span className="text-muted-foreground text-sm">Page {page + 1}</span>
+          <Button variant="outline" size="sm" disabled={!hasMore || loading || Boolean(loadError)}
+            onClick={() => setCursor({ type, page: page + 1 })}>Next</Button>
+        </div>
       </CardContent>
 
       <Dialog
