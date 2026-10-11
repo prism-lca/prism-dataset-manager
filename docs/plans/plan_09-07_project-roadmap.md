@@ -1,9 +1,10 @@
 # PRISM LCA — Plan
 
-Single running plan for this repo. Supersedes the old `plan.md` (2026-09-07) and
+Single running plan for this repo. Supersedes the old `docs/plans/plan_09-07_project-roadmap.md` (2026-09-07) and
 `plan-0908.md` (2026-09-08), which are now folded in below as dated sections —
-**do not create new plan-YYYYMMDD.md files going forward, keep appending here.**
-Each section is marked with its status. See `WORKLOG.md` for the detailed
+This file remains the running project roadmap. Topic plans live alongside it
+using `plan_MM-DD_title.md`, with the original creation date in the filename.
+Each section is marked with its status. See `docs/history/worklog.md` for the detailed
 session-by-session log; this file is the forward-looking plan + a compressed
 history of what shipped.
 
@@ -11,25 +12,25 @@ Status legend: ✅ done · 🚧 in progress · 🔜 not started
 
 ## 2026-10-11 — Current status and next work 🚧 in progress
 
-Review against repository code, `WORKLOG.md`, and PR #1 on 2026-10-11:
+Review against repository code, `docs/history/worklog.md`, and PR #1 on 2026-10-11:
 
 - **Database relationship stages: ✅ complete and deployed.**
-  [1010stage.md](1010stage.md) records acceptance and rollout of all four stages.
+  [1010stage.md](plan_10-10_database-implementation-stages.md) records acceptance and rollout of all four stages.
   Do not rerun the deployed migrations or historical reseeding instructions
   below. September notes describe the state at that date, not current actions.
-- **Original-file preservation and safe editing: implemented; frontend release
-  pending.** The user authorized direct integration into `main` on 2026-10-11.
+- **Original-file preservation and safe editing: ✅ deployed.** The user authorized direct integration into `main` on 2026-10-11.
   [PR #1](https://github.com/prism-lca/prism-dataset-manager/pull/1) contains the
   implementation. Its two database migrations are already live according to
-  the rollout log; frontend deployment still needs verification.
+  the rollout log. Frontend commit `8342b23` deployed successfully on October 11;
+  homepage data loading and Import navigation passed browser smoke checks.
 - **Complete engine provenance and mapping coverage: 🔜 pending.** Source links
   currently report `unassessed`. Synthetic five-format fixtures establish the
   tested preservation cases, not complete vendor-format or field coverage.
 
 Next work, in order:
 
-1. Integrate the preservation release into `main` under the user's explicit
-   authorization, then verify the GitHub Pages deployment.
+1. Preservation release integration and deployment verification: ✅ complete.
+   Continue with the engine provenance contract below.
 2. Implement and test the engine provenance contract: per-row source locators,
    warning selectors, and field-level mapping coverage. The companion contract
    is absent from engine main per the latest implementation review; establish
@@ -38,7 +39,7 @@ Next work, in order:
    coverage, then promote supported fields into dedicated UI with edit/export
    round-trip tests. Full per-type ILCD validation remains separate work.
 
-[PLAN_LOSSLESS_IMPORT_UI.md](PLAN_LOSSLESS_IMPORT_UI.md) owns the detailed
+[PLAN_LOSSLESS_IMPORT_UI.md](plan_09-16_lossless-import-ui.md) owns the detailed
 cross-repository roadmap and acceptance criteria. Keep the October database
 stages closed; continue the remaining preservation/provenance work there.
 
@@ -235,7 +236,7 @@ Three separate asks, in order:
 ### Phase 4 — Import more real data via the lca-mcp MCP server ✅ done (2026-09-12)
 
 Recap of how the existing 18 lca-mcp processes were imported (prior session,
-not detailed in this plan file — per `WORKLOG.md` 2026-09-10 entry, "Add 18
+not detailed in this plan file — per `docs/history/worklog.md` 2026-09-10 entry, "Add 18
 processes from lca-mcp product graphs to seed data"): pulled from the lca-mcp
 MCP server's bundled product graphs.
 
@@ -386,7 +387,7 @@ multi-user migration, and import RPC. The original October 10 design review
 did not apply migrations or recheck live state. The implementation and
 production acceptance followed on October 11, as recorded below.
 
-Implementation follow-up: see [1010stage.md](1010stage.md). The migration and
+Implementation follow-up: see [1010stage.md](plan_10-10_database-implementation-stages.md). The migration and
 frontend are implemented and tested, including a live-catalog-copy rehearsal.
 On 2026-10-11 the refreshed management token enabled a full logical backup and
 production migration. All 85 datasets and the import batch were preserved,

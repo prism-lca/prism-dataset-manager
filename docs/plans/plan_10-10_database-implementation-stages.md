@@ -7,9 +7,10 @@ passed. Live app: https://prism-lca.github.io/prism-dataset-manager/.
 Review on 2026-10-11: this document closes the relationship-table rollout,
 not the later original-file preservation release. That follow-up adds
 `import_artifacts` and `dataset_source_records` plus private Storage; its database
-migrations are live according to `WORKLOG.md`; the user authorized direct main
-integration of frontend PR #1, with deployment verification still pending. See [plan.md](plan.md) for current sequencing and
-[PLAN_LOSSLESS_IMPORT_UI.md](PLAN_LOSSLESS_IMPORT_UI.md) for remaining acceptance.
+migrations are live according to `docs/history/worklog.md`; the user authorized direct main
+integration of frontend PR #1. Commit `8342b23` deployed successfully, with
+homepage data loading and Import navigation verified in the browser. See [plan.md](plan_09-07_project-roadmap.md) for current sequencing and
+[PLAN_LOSSLESS_IMPORT_UI.md](plan_09-16_lossless-import-ui.md) for remaining acceptance.
 The three-table target below describes this rollout's scope, not the complete
 application schema after the preservation migrations. Do not reapply the
 October 10 migration: later migrations extend the import RPC.
@@ -265,7 +266,7 @@ would not enforce links embedded inside those documents.
 
 ## References
 
-- [Existing design review](plan.md#2026-10-10--supabase-table-design-recommendation--proposed)
+- [Existing design review](plan_09-07_project-roadmap.md#2026-10-10--supabase-table-design-recommendation--implemented-2026-10-11)
 - [Supabase JSON guidance](https://supabase.com/docs/guides/database/json)
 - [PostgreSQL constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)
 - [Supabase Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)

@@ -2,7 +2,7 @@
 
 A minimal starting point for working with AI coding assistants in a dev container. The container image comes pre-loaded with all tools — this repo only needs the config files to get everything running.
 
-This repo also houses **PRISM LCA**, a minimal clone of [tiangong-lca-next](https://github.com/linancn/tiangong-lca-next)'s sidebar/data-browsing shell (see `plan.md` for the full design). See below for how to run and deploy it.
+This repo also houses **PRISM LCA**, a minimal clone of [tiangong-lca-next](https://github.com/linancn/tiangong-lca-next)'s sidebar/data-browsing shell (see `docs/plans/plan_09-07_project-roadmap.md` for the full design). See below for how to run and deploy it. Browse the [documentation index](docs/README.md) for plans, database explanations, history, and setup guides.
 
 ---
 
@@ -84,7 +84,7 @@ JSON/XML/text search, paged long text, binary entry download, selectable text
 encoding, and exact original download. Mapping is explicitly **unassessed**
 until the engine supplies field-level coverage. Editing preserves unknown fields
 and rejects stale writes. Existing imports may omit fields required for new
-manual records; editing does not force these missing fields to be invented. See [the staged roadmap](PLAN_LOSSLESS_IMPORT_UI.md).
+manual records; editing does not force these missing fields to be invented. See [the staged roadmap](docs/plans/plan_09-16_lossless-import-ui.md).
 
 Verification:
 
@@ -154,7 +154,7 @@ Run both commands as the local PostgreSQL administrator. The Python check
 opens separate local connections to test COMMIT rollback and concurrent import
 retries, then removes its fixtures. Use only a disposable local database.
 
-See [1010stage.md](1010stage.md) for rollout status and the implementation stages.
+See [1010stage.md](docs/plans/plan_10-10_database-implementation-stages.md) for rollout status and the implementation stages.
 
 ### Deploying to GitHub Pages
 

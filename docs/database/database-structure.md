@@ -104,9 +104,9 @@ unconfirmed uploads older than 24 hours.
 
 ## Schema Sources
 
-- [Base dataset schema](supabase/seed.sql)
-- [Ownership and import batches](supabase/migrations/202609160001_multi_user_import.sql)
-- [Dataset constraints and relationships](supabase/migrations/202610100001_dataset_references.sql)
-- [Original artifacts and source records](supabase/migrations/202610110001_lossless_import.sql)
-- [Scheduled original-file cleanup](supabase/migrations/202610110002_import_original_cleanup.sql)
-- [Preservation roadmap and remaining acceptance](PLAN_LOSSLESS_IMPORT_UI.md)
+- [Base dataset schema](../../supabase/seed.sql)
+- [Ownership and import batches](../../supabase/migrations/202609160001_multi_user_import.sql)
+- [Dataset constraints and relationships](../../supabase/migrations/202610100001_dataset_references.sql)
+- [Original artifacts and source records](../../supabase/migrations/202610110001_lossless_import.sql)
+- [Scheduled original-file cleanup](../../supabase/migrations/202610110002_import_original_cleanup.sql)
+- [Preservation roadmap and remaining acceptance](../plans/plan_09-16_lossless-import-ui.md)
