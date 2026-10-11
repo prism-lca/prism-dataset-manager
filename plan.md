@@ -360,7 +360,9 @@ frontend are implemented and tested, including a live-catalog-copy rehearsal.
 On 2026-10-11 the refreshed management token enabled a full logical backup and
 production migration. All 85 datasets and the import batch were preserved,
 and live integrity/permissions and signed-in frontend acceptance passed.
-Frontend release is pending; see the staged plan for rollout details.
+Frontend release `728385b` deployed successfully to GitHub Pages, and deployed
+anonymous/signed-in browser checks passed. All four stages are complete; see
+the staged plan for rollout details and remaining separate work.
 
 ### Recommendation: one dataset table, with relational support tables
 

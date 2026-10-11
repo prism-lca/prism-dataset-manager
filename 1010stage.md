@@ -1,8 +1,8 @@
 # October 10 — Supabase implementation stages
 
-Status: production migration and signed-in browser/REST acceptance completed
-on 2026-10-11. Frontend release is pending. Local PostgreSQL 15 acceptance and
-the live PostgreSQL 17 rollout both passed.
+Status: all four stages completed and deployed on 2026-10-11. Local PostgreSQL
+15 acceptance, live PostgreSQL 17 migration, and deployed browser/REST checks
+passed. Live app: https://prism-lca.github.io/prism-dataset-manager/.
 
 ## Implementation and rollout status
 
@@ -224,7 +224,16 @@ create/edit, pagination controls, import confirmation/provenance/reference
 remapping, dependency RPC, deletion protection, two-user/anonymous isolation,
 atomic rollback, and retry reports. Only the engine conversion response was
 stubbed; auth and persistence were real. Test accounts, datasets, and batches
-were removed. Frontend deployment and deployed-browser verification remain.
+were removed.
+
+Frontend release `728385b` deployed successfully through GitHub Pages run
+`38099896624`. The deployed site passed the same signed-in browser/REST smoke
+and anonymous list/Process/Flow/Flow Property detail checks. Lists omit payloads;
+detail pages fetch only the root and paginated reachable dependencies. Tests
+produced no browser page errors. Temporary production fixtures were removed,
+and final integrity checks preserved the original 85 datasets/145 edges/one
+batch. This completes the staged plan; full ILCD validation, source-artifact
+archiving, and lossless editing remain separate work as noted above.
 
 1. Back up the deployed database and inspect its actual schema.
 2. Audit existing payloads for missing, wrong-type, or inaccessible targets.

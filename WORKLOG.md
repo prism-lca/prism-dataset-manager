@@ -2,6 +2,14 @@
 
 ## 2026-10-11
 
+- Released `728385b` to main; GitHub Pages run `38099896624` succeeded. Verified
+  the deployed app at `https://prism-lca.github.io/prism-dataset-manager/` with
+  anonymous lightweight-list/dependency-only-detail checks and the signed-in
+  create/edit/import/live-REST smoke. Both passed without browser page errors;
+  engine conversion alone was stubbed. Removed temporary production fixtures
+  and finalized the staged plan as complete. Full backup is retained outside
+  the repository at
+  `/workspaces/tiangong-simple-backups/20261011-pre-dataset-references/`.
 - After the user updated the management token, completed the production
   migration on PostgreSQL 17.6. With no available automatic backups, used a
   temporary CLI login and PostgreSQL 17 pg_dump/pg_dumpall to save a full
